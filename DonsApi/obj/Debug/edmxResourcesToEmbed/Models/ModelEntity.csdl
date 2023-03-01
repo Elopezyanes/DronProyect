@@ -1,0 +1,163 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="dronesModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="dron">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="serial_number" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="id_model" Type="Int32" Nullable="false" />
+    <Property Name="weight_limit" Type="Double" Nullable="false" />
+    <Property Name="batery_capacity" Type="Int32" Nullable="false" />
+    <Property Name="id_state" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="model" Relationship="Self.FK_dron_model" FromRole="dron" ToRole="model" />
+    <NavigationProperty Name="state" Relationship="Self.FK_dron_state" FromRole="dron" ToRole="state" />
+    <NavigationProperty Name="drone_medication" Relationship="Self.FK_drone_medication_dron" FromRole="dron" ToRole="drone_medication" />
+    <NavigationProperty Name="register_check_batery" Relationship="dronesModel.FK_register_check_batery_dron" FromRole="dron" ToRole="register_check_batery" />
+  </EntityType>
+  <EntityType Name="drone_medication">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="id_dron" Type="Int32" Nullable="false" />
+    <Property Name="id_medicamento" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="dron" Relationship="Self.FK_drone_medication_dron" FromRole="drone_medication" ToRole="dron" />
+    <NavigationProperty Name="medication" Relationship="Self.FK_drone_medication_medication" FromRole="drone_medication" ToRole="medication" />
+  </EntityType>
+  <EntityType Name="medication">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="weight" Type="Double" Nullable="false" />
+    <Property Name="code" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="image" Type="Binary" MaxLength="Max" FixedLength="false" Nullable="false" />
+    <NavigationProperty Name="drone_medication" Relationship="Self.FK_drone_medication_medication" FromRole="medication" ToRole="drone_medication" />
+  </EntityType>
+  <EntityType Name="model">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="250" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="dron" Relationship="Self.FK_dron_model" FromRole="model" ToRole="dron" />
+  </EntityType>
+  <EntityType Name="state">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <NavigationProperty Name="dron" Relationship="Self.FK_dron_state" FromRole="state" ToRole="dron" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_dron_model">
+    <End Role="model" Type="Self.model" Multiplicity="1" />
+    <End Role="dron" Type="Self.dron" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="model">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="dron">
+        <PropertyRef Name="id_model" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_dron_state">
+    <End Role="state" Type="Self.state" Multiplicity="1" />
+    <End Role="dron" Type="Self.dron" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="state">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="dron">
+        <PropertyRef Name="id_state" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_drone_medication_dron">
+    <End Role="dron" Type="Self.dron" Multiplicity="1" />
+    <End Role="drone_medication" Type="Self.drone_medication" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="dron">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="drone_medication">
+        <PropertyRef Name="id_dron" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_drone_medication_medication">
+    <End Role="medication" Type="Self.medication" Multiplicity="1" />
+    <End Role="drone_medication" Type="Self.drone_medication" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="medication">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="drone_medication">
+        <PropertyRef Name="id_medicamento" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="dronesEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="dron" EntityType="Self.dron" />
+    <EntitySet Name="drone_medication" EntityType="Self.drone_medication" />
+    <EntitySet Name="medication" EntityType="Self.medication" />
+    <EntitySet Name="model" EntityType="Self.model" />
+    <EntitySet Name="state" EntityType="Self.state" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+    <AssociationSet Name="FK_dron_model" Association="Self.FK_dron_model">
+      <End Role="model" EntitySet="model" />
+      <End Role="dron" EntitySet="dron" />
+    </AssociationSet>
+    <AssociationSet Name="FK_dron_state" Association="Self.FK_dron_state">
+      <End Role="state" EntitySet="state" />
+      <End Role="dron" EntitySet="dron" />
+    </AssociationSet>
+    <AssociationSet Name="FK_drone_medication_dron" Association="Self.FK_drone_medication_dron">
+      <End Role="dron" EntitySet="dron" />
+      <End Role="drone_medication" EntitySet="drone_medication" />
+    </AssociationSet>
+    <AssociationSet Name="FK_drone_medication_medication" Association="Self.FK_drone_medication_medication">
+      <End Role="medication" EntitySet="medication" />
+      <End Role="drone_medication" EntitySet="drone_medication" />
+    </AssociationSet>
+    <EntitySet Name="register_check_batery" EntityType="dronesModel.register_check_batery" />
+    <AssociationSet Name="FK_register_check_batery_dron" Association="dronesModel.FK_register_check_batery_dron">
+      <End Role="dron" EntitySet="dron" />
+      <End Role="register_check_batery" EntitySet="register_check_batery" />
+    </AssociationSet>
+  </EntityContainer>
+  <EntityType Name="register_check_batery">
+    <Key>
+      <PropertyRef Name="id" />
+    </Key>
+    <Property Name="id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="id_dron" Type="Int32" Nullable="false" />
+    <Property Name="batery_level" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="dron" Relationship="dronesModel.FK_register_check_batery_dron" FromRole="register_check_batery" ToRole="dron" />
+  </EntityType>
+  <Association Name="FK_register_check_batery_dron">
+    <End Type="dronesModel.dron" Role="dron" Multiplicity="1" />
+    <End Type="dronesModel.register_check_batery" Role="register_check_batery" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="dron">
+        <PropertyRef Name="id" />
+      </Principal>
+      <Dependent Role="register_check_batery">
+        <PropertyRef Name="id_dron" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+</Schema>
